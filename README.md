@@ -90,3 +90,88 @@ these classes should be able to be used interchangably in code.
 
 This also ensures that your return types are consistent, so if you use class B instead of A, you should expect that check returns the exact same type of response.
 
+## Interface Segregation Principle
+
+The interface-segregation principle (ISP) states that no client should be forced to depend on methods it does not use. ISP splits interfaces which are very large into smaller and more specific ones so that clients will only have to know about the methods that are of interest to them. Such shrunken interfaces are also called role interfaces. ISP is intended to keep a system decoupled and thus easier to refactor, change, and redeploy. 
+
+In my words: We don't want to have a class that implements an interface that it doesn't need all the method of.
+
+A contrived example would be:
+
+Imagine we had a class Manager that was in charge of managing humans and robots. Your code might look lke this:
+
+```php
+
+class Manager {
+    public function manage(WorkerInterface $worker) {
+        $worker->work();
+        $worker->sleep();
+    }
+}
+
+class HumanWorker implements WorkerInterface {
+    public function work() {
+        // working
+    }
+    public function sleep() {
+        // sleeping
+    }
+}
+
+class RobotWorker implements WorkerInterface {
+    public function work() {
+        // working
+    }
+    public function sleep() {
+        // sleep?
+        return null // Breaks ISP
+    }
+}
+
+interface WorkerInterface {
+    public function work();
+    public function sleep();
+}
+
+```
+Notice in this example that the RobotWorker has to implement the sleep method, but it doesn't really have any reason to. We need to break these interfaces apart. Something like this might be appropriate:
+
+```php
+class Manager {
+    public function manage(Manageable $worker) {
+        $worker->beManaged();
+    }
+}
+
+class HumanWorker implements WorkableInterface, SleepableInterface, ManageableInterface {
+    public function work() {
+        // working
+    }
+    public function sleep() {
+        // sleeping
+    }
+    public function beManaged() {
+        $this->work();
+        $this->sleep()
+    }
+}
+
+class RobotWorker implements WorkableInterface, ManageableInterface {
+    public function work() {
+        // working
+    }
+    public function beManaged() {
+        $this->work();
+    }
+}
+
+interface WorkableInterface {
+    public function work();
+}
+interface SleepableInterface {
+    public function sleep();
+}
+interface ManageableInterface {
+    public function beManaged();
+}
+```
