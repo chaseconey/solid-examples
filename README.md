@@ -69,3 +69,24 @@ class Checkout {
 ```
 
 In my words: now we can easily extend the functionality of the Checkout class, by creating a new class that implements the PaymentMethodInterface. We don't need to have a switch/if in the begin function based on what type of payment it is.
+
+## Liskov Substitution Principle (LSP)
+
+Substitutability is a principle in object-oriented programming. It states that, in a computer program, if S is a subtype of T, then objects of type T may be replaced with objects of type S (i.e., objects of type S may substitute objects of type T) without altering any of the desirable properties of that program (correctness, task performed, etc.)
+
+In my words: All this principle states is that all inputs and outputs of a class should be the same when related. So if you have:
+
+```php
+class A {
+    public function check() {}
+}
+
+class B extends A {
+    public function check() {}
+}
+```
+
+these classes should be able to be used interchangably in code.
+
+This also ensures that your return types are consistent, so if you use class B instead of A, you should expect that check returns the exact same type of response.
+
